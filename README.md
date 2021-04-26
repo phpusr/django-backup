@@ -11,7 +11,7 @@ pipenv install -e git+https://github.com/phpusr/django-backup@v1.0#egg=django-ba
 
 ## Using
 
-The app contains a task for celery that needs to be registered in your app.
+The app contains a task for [Celery](https://docs.celeryproject.org/) that needs to be registered in your app.
 
 **config/celery.py**
 
