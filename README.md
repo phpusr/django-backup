@@ -3,7 +3,15 @@ django-backup
 
 A simple Django app to regular backup db to Google Drive.
 
+## Installing
+
+```bash
+pipenv install -e git+https://github.com/phpusr/django-backup@v1.0#egg=django-backup
+```
+
 The app creates a task for celery that needs to be registered in your app.
+
+## Using
 
 **config/celery.py**
 
