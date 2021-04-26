@@ -12,8 +12,16 @@ class Command(BaseCommand):
 
 
 def encode_gdrive_account_file():
-    service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
-    enc_service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.enc'
+    if hasattr(settings, 'SERVICE_ACCOUNT_FILE_PATH'):
+        service_account_file_path = settings.SERVICE_ACCOUNT_FILE_PATH
+    else:
+        service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
+
+    if hasattr(settings, 'ENCODE_SERVICE_ACCOUNT_FILE_PATH'):
+        enc_service_account_file_path = settings.ENCODE_SERVICE_ACCOUNT_FILE_PATH
+    else:
+        enc_service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.enc'
+
     with open(service_account_file_path) as service_account_file:
         with open(enc_service_account_file_path, 'w') as enc_file:
             data = json.load(service_account_file)
