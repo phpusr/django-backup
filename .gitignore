@@ -1,0 +1,5 @@
+/.idea/
+
+/build/
+/dist/
+/django_backup.egg-info/
