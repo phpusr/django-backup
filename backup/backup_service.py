@@ -14,7 +14,13 @@ BACKUP_DB_FORMAT = getattr(settings, 'BACKUP_DB_FORMAT', 'json')
 
 logger = logging.getLogger(__name__)
 
-# Decoding GDrive service account file
+# Decoded GDrive service account file
+if hasattr(settings, 'SERVICE_ACCOUNT_FILE_PATH'):
+    service_account_file_path = settings.SERVICE_ACCOUNT_FILE_PATH
+else:
+    service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
+
+# Encoded GDrive service account file
 if hasattr(settings, 'ENCODE_SERVICE_ACCOUNT_FILE_PATH'):
     enc_service_account_file_path = settings.ENCODE_SERVICE_ACCOUNT_FILE_PATH
 else:
@@ -24,10 +30,6 @@ if enc_service_account_file_path.exists():
     with open(enc_service_account_file_path) as enc_file:
         gdrive_account_data = signing.loads(enc_file.read())
 
-    if hasattr(settings, 'SERVICE_ACCOUNT_FILE_PATH'):
-        service_account_file_path = settings.SERVICE_ACCOUNT_FILE_PATH
-    else:
-        service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
     with open(service_account_file_path, 'w') as service_account_file:
         json.dump(gdrive_account_data, service_account_file, indent=2)
 else:
