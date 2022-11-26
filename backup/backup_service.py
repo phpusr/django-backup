@@ -19,15 +19,19 @@ if hasattr(settings, 'ENCODE_SERVICE_ACCOUNT_FILE_PATH'):
     enc_service_account_file_path = settings.ENCODE_SERVICE_ACCOUNT_FILE_PATH
 else:
     enc_service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.enc'
-with open(enc_service_account_file_path) as enc_file:
-    gdrive_account_data = signing.loads(enc_file.read())
 
-if hasattr(settings, 'SERVICE_ACCOUNT_FILE_PATH'):
-    service_account_file_path = settings.SERVICE_ACCOUNT_FILE_PATH
+if enc_service_account_file_path.exists():
+    with open(enc_service_account_file_path) as enc_file:
+        gdrive_account_data = signing.loads(enc_file.read())
+
+    if hasattr(settings, 'SERVICE_ACCOUNT_FILE_PATH'):
+        service_account_file_path = settings.SERVICE_ACCOUNT_FILE_PATH
+    else:
+        service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
+    with open(service_account_file_path, 'w') as service_account_file:
+        json.dump(gdrive_account_data, service_account_file, indent=2)
 else:
-    service_account_file_path = settings.BASE_DIR / 'config/gdrive_account.json'
-with open(service_account_file_path, 'w') as service_account_file:
-    json.dump(gdrive_account_data, service_account_file, indent=2)
+    logger.warning('Encoded service account file was not found!')
 
 # Creating GDrive service
 scopes = ['https://www.googleapis.com/auth/drive']
