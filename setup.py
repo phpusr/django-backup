@@ -22,10 +22,13 @@ setup(
     author='phpusr',
     author_email='phpusr@gmail.com',
     install_requires=[
-        'google-api-python-client >=2.2.0, <2.3.0',
-        'celery >=5.0.5, <5.1',
-        'redis >=3.5.3, <3.6'
+        'celery >=5.0.5, <5.6',
+        'redis >=3.5.3, <6.2',
     ],
+    extras_require={
+        'gdrive': ['google-api-python-client >=2.2.0, <2.3.0'],
+        'yandex-disk': ['requests >=2.32, <2.33']
+    },
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django :: 3.2',

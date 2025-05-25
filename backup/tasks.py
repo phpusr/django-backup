@@ -1,12 +1,13 @@
 import logging
 
-from backup import backup_service
-from config.celery import app
+from celery import shared_task
+
+from backup.services import backup_service
 
 logger = logging.getLogger(__name__)
 
 
-@app.task
+@shared_task
 def backup_db_task():
     logger.info('--- Backup DB task started ---')
     result = backup_service.backup_db()

@@ -15,7 +15,8 @@ def backup_db():
         from backup.services.gdrive_backup_service import GDriveBackupService
         backup_service = GDriveBackupService()
     elif backup_type == 'YANDEX_DISK':
-        pass
+        from backup.services.yadisk_backup_service import YandexDiskBackupService
+        backup_service = YandexDiskBackupService()
 
     if backup_service:
         backup_service.backup_db()
