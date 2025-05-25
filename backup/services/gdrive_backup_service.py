@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from typing import Dict
 
 from django.conf import settings
@@ -9,8 +8,6 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 from backup.services.backup_service import BaseBackupService
-
-BACKUP_DB_FORMAT = getattr(settings, 'BACKUP_DB_FORMAT', 'json')
 
 
 class GDriveBackupService(BaseBackupService):
@@ -50,19 +47,9 @@ class GDriveBackupService(BaseBackupService):
         credentials = Credentials.from_service_account_file(service_account_file_path, scopes=scopes)
         self.service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
 
-    def upload_file(self, file_path: str) -> Dict[str, str]:
-        now_str = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-
-        if not settings.ALLOWED_HOSTS:
-            suffix = '-DEV'
-        elif settings.ALLOWED_HOSTS == ['testserver']:
-            suffix = '-TEST'
-        else:
-            suffix = '-PROD'
-
-        file_name = f'db_{now_str}{suffix}.{BACKUP_DB_FORMAT}'
+    def upload_file(self, file_path: str, upload_filename: str) -> Dict[str, str]:
         file_metadata = {
-            'name': file_name,
+            'name': upload_filename,
             'parents': [settings.GDRIVE_FOLDER_ID]
         }
 

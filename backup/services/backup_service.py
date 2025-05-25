@@ -1,5 +1,6 @@
 import logging
 import tempfile
+from datetime import datetime
 
 from django.conf import settings
 from django.core import management
@@ -29,10 +30,25 @@ class BaseBackupService:
     def backup_db(self):
         with tempfile.NamedTemporaryFile() as tmp_file:
             management.call_command('dumpdata', indent=2, format=BACKUP_DB_FORMAT, output=tmp_file.name)
-            self.upload_file(tmp_file.name)
+            now_str = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
-    def upload_file(self, filename: str):
+            if not settings.ALLOWED_HOSTS:
+                suffix = '-DEV'
+            elif settings.ALLOWED_HOSTS == ['testserver']:
+                suffix = '-TEST'
+            else:
+                suffix = '-PROD'
+
+            upload_filename = f'db_{now_str}{suffix}.{BACKUP_DB_FORMAT}'
+            self.upload_file(tmp_file.name, upload_filename)
+
+    def upload_file(self, filename: str, upload_filename):
         pass
 
     def delete_old_files(self, days: int):
         pass
+
+
+class BackupError(Exception):
+    def __init__(self, message):
+        self.message = message
