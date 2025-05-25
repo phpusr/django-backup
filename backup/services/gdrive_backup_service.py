@@ -10,14 +10,14 @@ from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-from backup.services.backup_service import BackupService
+from backup.services.backup_service import BaseBackupService
 
 BACKUP_DB_FORMAT = getattr(settings, 'BACKUP_DB_FORMAT', 'json')
 
 logger = logging.getLogger(__name__)
 
 
-class GDriveBackupService(BackupService):
+class GDriveBackupService(BaseBackupService):
 
     def __init__(self):
         # Decoded GDrive service account file

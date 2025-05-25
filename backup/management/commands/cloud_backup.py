@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from backup import backup_service
+from backup.services import backup_service
 
 
 class Command(BaseCommand):
