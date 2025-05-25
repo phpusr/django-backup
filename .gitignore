@@ -4,3 +4,5 @@ __pycache__/
 /build/
 /dist/
 /django_backup.egg-info/
+
+/*.iml
