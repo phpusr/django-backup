@@ -44,7 +44,7 @@ class YandexDiskBackupService(BaseBackupService):
         return upload_response
 
     def delete_old_files(self, days_to_keep: int):
-        start_date = datetime.now(timezone.utc) - timedelta(minutes=days_to_keep)
+        start_date = datetime.now(timezone.utc) - timedelta(days=days_to_keep)
         self.logger.info(f'Start delete date: {start_date}')
         for item in self.list_files():
             file_date = datetime.fromisoformat(item['created'])
