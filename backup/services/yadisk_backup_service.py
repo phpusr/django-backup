@@ -39,17 +39,16 @@ class YandexDiskBackupService(BaseBackupService):
         if upload_response.status_code != 201:
             raise BackupError(f'Failed to upload: {upload_response.text}')
 
-        self.logger.info(f'✅ The file has been successfully uploaded to: %s', file_path_on_disk)
+        self.logger.info(f' - ✅ The file has been successfully uploaded to: %s', file_path_on_disk)
 
         return upload_response
 
-    def delete_old_files(self, days: int):
-        start_date = datetime.now(timezone.utc) - timedelta(minutes=days)
+    def delete_old_files(self, days_to_keep: int):
+        start_date = datetime.now(timezone.utc) - timedelta(minutes=days_to_keep)
         self.logger.info(f'Start delete date: {start_date}')
         for item in self.list_files():
             file_date = datetime.fromisoformat(item['created'])
             if file_date < start_date:
-                self.logger.info(f'- Deleting old file: {item["path"]} from {file_date}')
                 self.delete_file(item['path'])
 
     def list_files(self):
@@ -61,10 +60,11 @@ class YandexDiskBackupService(BaseBackupService):
         return response.json()['_embedded']['items']
 
     def delete_file(self, path: str):
+        self.logger.info(f' - Deleting old file: "{path}"')
         response = requests.delete(BASE_URL, headers=self.headers, params={'path': path})
 
         if response.status_code != 204:
             self.logger.error(f'Error: {response.status_code} {response.text}')
             return
 
-        self.logger.info(f'  ✅ File {path} deleted')
+        self.logger.info(f'   ✅ File "{path}" deleted')

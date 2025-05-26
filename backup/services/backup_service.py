@@ -7,7 +7,7 @@ from django.core import management
 
 BACKUP_DB_FORMAT = getattr(settings, 'BACKUP_DB_FORMAT', 'json')
 
-def backup_db():
+def get_service():
     backup_type = getattr(settings, 'BACKUP_SERVICE')
     backup_service = None
 
@@ -19,11 +19,9 @@ def backup_db():
         backup_service = YandexDiskBackupService()
 
     if not backup_service:
-        return None
+        raise BackupError(f'Unknown backup service: {backup_type}')
 
-    res = backup_service.backup_db()
-    backup_service.delete_old_files(30)
-    return res
+    return backup_service
 
 
 class BaseBackupService:

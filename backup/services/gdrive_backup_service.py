@@ -56,7 +56,7 @@ class GDriveBackupService(BaseBackupService):
         media = MediaFileUpload(file_path, resumable=True)
         return self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-    def delete_old_files(self, days: int):
+    def delete_old_files(self, days_to_keep: int):
         result = self.service.files().list(
             fields='files(id, name)',
             orderBy='name desc',
@@ -64,8 +64,7 @@ class GDriveBackupService(BaseBackupService):
             q=f'"{settings.GDRIVE_FOLDER_ID}" in parents'
         ).execute()
 
-        backup_db_file_number = getattr(settings, 'BACKUP_DB_FILE_NUMBER', days)
-        old_files = result['files'][backup_db_file_number:]
+        old_files = result['files'][days_to_keep:]
         for file in old_files:
             self.logger.debug('Deleting file:', file)
             self.service.files().delete(fileId=file['id']).execute()
