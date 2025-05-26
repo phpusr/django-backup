@@ -18,9 +18,12 @@ def backup_db():
         from backup.services.yadisk_backup_service import YandexDiskBackupService
         backup_service = YandexDiskBackupService()
 
-    if backup_service:
-        backup_service.backup_db()
-        backup_service.delete_old_files(30)
+    if not backup_service:
+        return None
+
+    res = backup_service.backup_db()
+    backup_service.delete_old_files(30)
+    return res
 
 
 class BaseBackupService:
@@ -41,13 +44,13 @@ class BaseBackupService:
                 suffix = '-PROD'
 
             upload_filename = f'db_{now_str}{suffix}.{BACKUP_DB_FORMAT}'
-            self.upload_file(tmp_file.name, upload_filename)
+            return self.upload_file(tmp_file.name, upload_filename)
 
     def upload_file(self, filename: str, upload_filename):
-        pass
+        raise NotImplementedError()
 
     def delete_old_files(self, days: int):
-        pass
+        raise NotImplementedError()
 
 
 class BackupError(Exception):

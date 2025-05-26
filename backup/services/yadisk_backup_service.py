@@ -38,6 +38,7 @@ class YandexDiskBackupService(BaseBackupService):
             raise BackupError(f'Failed to upload: {upload_response.text}')
 
         self.logger.info(f'✅ The file has been successfully uploaded to: %s', file_path_on_disk)
+
         return upload_response
 
     def delete_old_files(self, days: int):

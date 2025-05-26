@@ -54,8 +54,7 @@ class GDriveBackupService(BaseBackupService):
         }
 
         media = MediaFileUpload(file_path, resumable=True)
-        result = self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-        return result
+        return self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
     def delete_old_files(self, days: int):
         result = self.service.files().list(
