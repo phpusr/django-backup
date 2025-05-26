@@ -24,6 +24,7 @@ setup(
     install_requires=[
         'celery >=5.0.5, <5.6',
         'redis >=3.5.3, <6.2',
+        'django_celery_beat >=2.8.1, <2.9'
     ],
     extras_require={
         'gdrive': ['google-api-python-client >=2.2.0, <2.3.0'],
