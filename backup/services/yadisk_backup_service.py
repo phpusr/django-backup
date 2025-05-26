@@ -1,3 +1,5 @@
+from datetime import datetime, timezone, timedelta
+
 import requests
 from django.conf import settings
 
@@ -42,4 +44,27 @@ class YandexDiskBackupService(BaseBackupService):
         return upload_response
 
     def delete_old_files(self, days: int):
-        pass
+        start_date = datetime.now(timezone.utc) - timedelta(minutes=days)
+        self.logger.info(f'Start delete date: {start_date}')
+        for item in self.list_files():
+            file_date = datetime.fromisoformat(item['created'])
+            if file_date < start_date:
+                self.logger.info(f'- Deleting old file: {item["path"]} from {file_date}')
+                self.delete_file(item['path'])
+
+    def list_files(self):
+        response = requests.get(BASE_URL, headers=self.headers, params={'path': 'app:/'})
+
+        if response.status_code != 200:
+            raise BackupError(f'Error: {response.status_code} {response.text}')
+
+        return response.json()['_embedded']['items']
+
+    def delete_file(self, path: str):
+        response = requests.delete(BASE_URL, headers=self.headers, params={'path': path})
+
+        if response.status_code != 204:
+            self.logger.error(f'Error: {response.status_code} {response.text}')
+            return
+
+        self.logger.info(f'  ✅ File {path} deleted')
