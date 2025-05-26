@@ -8,6 +8,7 @@ class Command(BaseCommand):
     help = 'Create periodic backup tasks'
 
     def handle(self, *args, **options):
+        # noinspection PyUnresolvedReferences
         crontab, created = CrontabSchedule.objects.get_or_create(minute=0, hour=4)
 
         if created:
